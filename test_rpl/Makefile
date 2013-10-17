@@ -1,0 +1,45 @@
+####
+#### Sample Makefile for building apps with the RIOT OS
+####
+#### The Sample Filesystem Layout is:
+#### /this makefile
+#### ../../RIOT 
+#### ../../boards   for board definitions (if you have one or more)
+#### 
+
+# name of your project
+export PROJECT =foobar
+
+# for easy switching of boards
+ifeq ($(strip $(BOARD)),)
+	export BOARD = msba2
+endif
+
+# this has to be the absolute path of the RIOT-base dir
+export RIOTBASE =$(CURDIR)/../../RIOT
+export RIOTCPU =$(CURDIR)/../../RIOT/cpu
+export RIOTBOARD =$(CURDIR)/../../boards
+
+## Modules to include. 
+USEMODULE += auto_init
+USEMODULE += vtimer
+USEMODULE += ps
+USEMODULE += shell
+USEMODULE += shell_commands
+USEMODULE += config
+ifeq ($(BOARD),native)
+	USEMODULE += nativenet
+else ifeq($(BOARD),msba2)
+USEMODULE += cc110x
+endif
+USEMODULE += transceiver
+USEMODULE += net_help
+USEMODULE += sixlowpan
+USEMODULE += destiny
+USEMODULE += uart0
+USEMODULE += posix
+USEMODULE += rpl
+
+export INCLUDES += -I$(RIOTBASE)/sys/include -I$(RIOTBASE)/drivers/include -I$(RIOTBASE)/drivers/cc110x -I$(RIOTBASE)/sys/net/destiny -I$(RIOTBASE)/sys/net/sixlowpan/include -I$(RIOTBASE)/sys/net/net_help -I$(RIOTBASE)/sys/net/rpl
+
+include $(RIOTBASE)/Makefile.include
